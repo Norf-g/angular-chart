@@ -1,0 +1,16 @@
+<div>
+  <mat-form-field>
+    <mat-select placeholder="с" [(value)]="datePeriod.dateFrom" (selectionChange)="changeDatePeriod($event)">
+      <mat-option *ngFor="let year of years" [value]="year" [disabled]="year > datePeriod.dateTo">
+        {{ year }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="по" [(value)]="datePeriod.dateTo" (selectionChange)="changeDatePeriod($event)">
+      <mat-option *ngFor="let year of years" [value]="year" [disabled]="year < datePeriod.dateFrom">
+        {{ year }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

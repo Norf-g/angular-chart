@@ -1,0 +1,7 @@
+<div>
+  <mat-button-toggle-group [vertical]="true" (change)="setType($event)" [value]="sources.temperature">
+    <mat-button-toggle [value]="sources.temperature">Температура</mat-button-toggle>
+    <mat-button-toggle [value]="sources.precipitation">Осадки</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+

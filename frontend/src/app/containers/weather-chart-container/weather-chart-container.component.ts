@@ -3,7 +3,7 @@ import { filter, findIndex, findLastIndex, slice } from 'lodash-es';
 import { WeatherApiService } from '../../services/weather.api.service';
 import { IWeatherData } from '../../weather.types';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { getAvegateValueByYear } from '../../services/weather.service';
+import { getAvegatesValues } from '../../services/weather.service';
 import { sourceTypes } from '../../weather.types';
 
 @Component({
@@ -28,25 +28,29 @@ export class WeatherChartContainerComponent {
     forkJoin([this.WeatherApiService.getTemperature(), this.WeatherApiService.getPrecipitation()]).subscribe((results) => {
       this.temperatures = results[0] as IWeatherData[];
       this.precipitation = results[1] as IWeatherData[];
+      this.getDataForChart();
     });
   }
 
   ngOnChanges() {
-    if (this.dateFilter && this.sourceFilter) {
+    this.getDataForChart();
+  }
+
+  private getDataForChart() {
+    if (this.dateFilter && this.sourceFilter && this.temperatures) {
+      let filteredData;
       if (this.sourceFilter === sourceTypes.temperature) {
-        this.dataForChart = this.getFilteredChartData(this.temperatures);
-        console.log('ttt',this.dataForChart);
+        filteredData = this.getFilteredChartData(this.temperatures);
       } else {
-        this.dataForChart = this.getFilteredChartData(this.precipitation);
-        console.log('ppp',this.dataForChart);
+        filteredData = this.getFilteredChartData(this.precipitation);
       }
+      this.dataForChart = getAvegatesValues(filteredData, 100);
     }
   }
 
   private getFilteredChartData(data) {
     const startPosition = findIndex(data, (item) => item.t.substr(0,4) == this.dateFilter.dateFrom);
-    const endPosition = findLastIndex(data, (item) => item.t.substr(0,4) == this.dateFilter.dataTo);
-
+    const endPosition = findLastIndex(data, (item) => item.t.substr(0,4) == this.dateFilter.dateTo);
     return slice(data, startPosition, endPosition);
   }
 

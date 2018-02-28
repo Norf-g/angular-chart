@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,9 @@ export class AppComponent {
 
   onSourceFilterChange(text) {
     this.sourceFilter = text;
-    console.log('sourceFilter', this.sourceFilter);
   }
 
   onDateFilterChange(datePeriod) {
-    this.dateFilter = datePeriod;
-    console.log('th', this.dateFilter);
+    this.dateFilter = cloneDeep(datePeriod);
   }
 }

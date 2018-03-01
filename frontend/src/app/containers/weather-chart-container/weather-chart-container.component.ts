@@ -25,18 +25,21 @@ export class WeatherChartContainerComponent {
   }
 
   ngOnInit() {
-    forkJoin([this.WeatherApiService.getTemperature(), this.WeatherApiService.getPrecipitation()]).subscribe((results) => {
-      this.temperatures = results[0] as IWeatherData[];
-      this.precipitation = results[1] as IWeatherData[];
-      this.getDataForChart();
-    });
+    forkJoin([this.WeatherApiService.getTemperature(), this.WeatherApiService.getPrecipitation()])
+      .subscribe((results: [IWeatherData[], IWeatherData[]]) => {
+        this.temperatures = results[0];
+        this.precipitation = results[1];
+        this.calculateDataForChart();
+      });
   }
 
   ngOnChanges() {
-    this.getDataForChart();
+    this.calculateDataForChart();
   }
 
-  private getDataForChart() {
+  private calculateDataForChart(): void {
+    const startDate = new Date().valueOf();
+
     if (this.dateFilter && this.sourceFilter && this.temperatures) {
       let filteredData;
       if (this.sourceFilter === sourceTypes.temperature) {
@@ -44,13 +47,16 @@ export class WeatherChartContainerComponent {
       } else {
         filteredData = this.getFilteredChartData(this.precipitation);
       }
-      this.dataForChart = getAvegatesValues(filteredData, 100);
+      this.dataForChart = getAvegatesValues(filteredData, 12);
     }
+
+    console.log('result= ', new Date().valueOf() - startDate);
   }
 
-  private getFilteredChartData(data) {
-    const startPosition = findIndex(data, (item) => item.t.substr(0,4) == this.dateFilter.dateFrom);
-    const endPosition = findLastIndex(data, (item) => item.t.substr(0,4) == this.dateFilter.dateTo);
+  private getFilteredChartData(data: IWeatherData[]): IWeatherData[] {
+    const startPosition = findIndex(data, (item) => item.t.substr(0, 4) == this.dateFilter.dateFrom);
+    const endPosition = findLastIndex(data, (item) => item.t.substr(0, 4) == this.dateFilter.dateTo);
+
     return slice(data, startPosition, endPosition);
   }
 

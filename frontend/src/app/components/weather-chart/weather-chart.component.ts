@@ -21,17 +21,20 @@ export class WeatherChartComponent {
 
   ngOnInit() {
     this.chart = new Chart('canvas', {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: [],
         datasets: [
           {
+            backgroundColor: '#a20f0f',
+            borderColor: '#a20f0f',
             data: [],
             fill: false
           }
         ]
       },
       options: {
+        response: true,
         pointBorderWidth: 0,
         elements: {
           line: {

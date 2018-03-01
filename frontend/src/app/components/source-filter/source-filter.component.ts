@@ -5,6 +5,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
   templateUrl: './source-filter.html',
   styleUrls: ['./source-filter.scss']
 })
+
 export class SourceFilterComponent {
   @Output() onFilterChange = new EventEmitter<any>();
 
@@ -25,7 +26,7 @@ export class SourceFilterComponent {
     this.onFilterChange.emit(this.sources.temperature);
   }
 
-  setType($event) {
+  setType($event): void {
     this.onFilterChange.emit($event.value);
   }
 

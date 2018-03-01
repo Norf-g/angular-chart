@@ -5,6 +5,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
   templateUrl: './date-filter.html',
   styleUrls: ['./date-filter.scss']
 })
+
 export class DateFilterComponent {
   @Output() onFilterChange = new EventEmitter<any>();
 
@@ -27,11 +28,11 @@ export class DateFilterComponent {
     this.onFilterChange.emit(this.datePeriod);
   }
 
-  changeDatePeriod($event) {
+  changeDatePeriod($event): void {
     this.onFilterChange.emit(this.datePeriod);
   }
 
-  private generateYears() {
+  private generateYears(): void {
     for (let i = 1881; i < 2007; i++) {
       this.years.push(i);
     }

@@ -20,6 +20,16 @@ export class WeatherChartComponent {
   }
 
   ngOnInit() {
+    this.initializeChartConfig();
+  }
+
+  ngOnChanges() {
+    if (this.data) {
+      this.updateChartConfig();
+    }
+  }
+
+  private initializeChartConfig() {
     this.chart = new Chart('canvas', {
       type: 'line',
       data: {
@@ -53,13 +63,7 @@ export class WeatherChartComponent {
     });
   }
 
-  ngOnChanges() {
-    if (this.data) {
-      this.updateChartConfig();
-    }
-  }
-
-  private updateChartConfig() {
+  private updateChartConfig(): void {
     this.chart.data.labels = this.data.map((item) => item.t);
     this.chart.data.datasets[0].data = this.data.map((item) => item.v);
     if (this.sourceType === sourceTypes.temperature) {

@@ -1,5 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCard, MatButtonModule, MatButtonToggleModule, MatSelectModule, MatFormFieldModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -11,16 +13,10 @@ import { WeatherChartContainerComponent } from './containers/weather-chart-conta
 
 import { WeatherApiService } from './services/weather.api.service';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    MatCard,
-    WeatherChartContainerComponent,
+import { AppReducer } from './app.reducer';
+import { AppEffects } from './app.effects';
 
-    components.SourceFilterComponent,
-    components.DateFilterComponent,
-    components.WeatherChartComponent,
-  ],
+@NgModule({
   imports: [
     BrowserModule,
     MatButtonModule,
@@ -29,7 +25,19 @@ import { WeatherApiService } from './services/weather.api.service';
     MatFormFieldModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
-    HttpClientModule
+    HttpClientModule,
+
+    StoreModule.forRoot(AppReducer),
+    EffectsModule.forRoot(AppEffects)
+  ],
+  declarations: [
+    AppComponent,
+    MatCard,
+    WeatherChartContainerComponent,
+
+    components.SourceFilterComponent,
+    components.DateFilterComponent,
+    components.WeatherChartComponent,
   ],
   providers: [
     WeatherApiService

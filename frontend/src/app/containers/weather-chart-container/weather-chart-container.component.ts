@@ -1,8 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { filter, findIndex, findLastIndex, slice } from 'lodash-es';
+import { findIndex, findLastIndex, slice } from 'lodash-es';
 import { WeatherApiService } from '../../services/weather.api.service';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+import { fetchTemperatureListStartAction, fetchPrecipitationListStartAction } from '../../store/actions';
+import { getWeatherTemperatureList, getWeatherPrecipitaionList } from '../../store/selectors';
 import { IWeatherData } from '../../weather.types';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 import { getAvegatesValues } from '../../services/weather.service';
 import { sourceTypes } from '../../weather.types';
 
@@ -16,19 +21,26 @@ export class WeatherChartContainerComponent {
   @Input() dateFilter: any;
   @Input() sourceFilter: any;
 
-  temperatures: IWeatherData[];
-  precipitation: IWeatherData[];
   dataForChart: IWeatherData[];
+  temperatureList: IWeatherData[];
+  precipitaionList: IWeatherData[];
+  temperatures$: Observable<any>;
+  precipitaion$: Observable<any>;
 
-  constructor(private WeatherApiService: WeatherApiService) {
+  constructor(private WeatherApiService: WeatherApiService, private store: Store<any>) {
 
   }
 
   ngOnInit() {
-    forkJoin([this.WeatherApiService.getTemperature(), this.WeatherApiService.getPrecipitation()])
+    this.store.dispatch(fetchTemperatureListStartAction());
+    this.store.dispatch(fetchPrecipitationListStartAction());
+    this.temperatures$ = this.store.select(getWeatherTemperatureList);
+    this.precipitaion$ = this.store.select(getWeatherPrecipitaionList);
+
+    combineLatest(this.temperatures$, this.precipitaion$)
       .subscribe((results: [IWeatherData[], IWeatherData[]]) => {
-        this.temperatures = results[0];
-        this.precipitation = results[1];
+        this.temperatureList = results[0];
+        this.precipitaionList = results[1];
         this.calculateDataForChart();
       });
   }
@@ -40,17 +52,17 @@ export class WeatherChartContainerComponent {
   private calculateDataForChart(): void {
     const startDate = new Date().valueOf();
 
-    if (this.dateFilter && this.sourceFilter && this.temperatures) {
+    if (this.dateFilter && this.sourceFilter && this.temperatureList) {
       let filteredData;
       if (this.sourceFilter === sourceTypes.temperature) {
-        filteredData = this.getFilteredChartData(this.temperatures);
+        filteredData = this.getFilteredChartData(this.temperatureList);
       } else {
-        filteredData = this.getFilteredChartData(this.precipitation);
+        filteredData = this.getFilteredChartData(this.precipitaionList);
       }
       this.dataForChart = getAvegatesValues(filteredData, 12);
     }
 
-    console.log('result= ', new Date().valueOf() - startDate);
+    console.log('calculation time = ', new Date().valueOf() - startDate);
   }
 
   private getFilteredChartData(data: IWeatherData[]): IWeatherData[] {

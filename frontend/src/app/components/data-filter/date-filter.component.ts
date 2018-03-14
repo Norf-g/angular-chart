@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { IDatePeriod } from '../../weather.types';
 
 @Component({
   selector: 'date-filter',
@@ -6,14 +7,12 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./date-filter.scss']
 })
 
+
 export class DateFilterComponent {
   @Output() onFilterChange = new EventEmitter<any>();
 
   years: number[] = [];
-  datePeriod: {
-    dateFrom: number
-    dateTo: number
-  };
+  datePeriod: IDatePeriod;
 
   constructor() {
 
